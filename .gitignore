@@ -1,1 +1,3 @@
 *.pyc
+bundle/Auto-Pairs bundle/Better-Javascript-Indentation bundle/CaptureClipboard bundle/command-t bundle/ctrlp-funky bundle/ctrlp-modified.vim bundle/ctrlp.vim bundle/FuzzyFinder bundle/indentLine bundle/JavaScript-Indent bundle/Javascript-Indentation bundle/Javascript-OmniCompletion-with-YUI-and-j bundle/javascript.vim bundle/jsbeautify bundle/jslint.vim bundle/L9 bundle/last_edit_marker.vim bundle/minibufexpl.vim bundle/OOP-javascript-indentation bundle/python-imports.vim bundle/sparkup bundle/synmark.vim bundle/syntastic bundle/The-NERD-Commenter bundle/vim-easymotion bundle/vim-fugitive bundle/vim-indent-guides bundle/vim-javascript bundle/Vim-Script-Updater bundle/vundle
+bundle/*
