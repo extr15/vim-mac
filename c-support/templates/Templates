@@ -8,7 +8,7 @@ SetMacro( 'COMPANY',     '' )
 SetMacro( 'COPYRIGHT',   'Copyright (c) |YEAR|, |AUTHOR|' )
 SetMacro( 'EMAIL',       'extr15@126.com' )
 SetMacro( 'LICENSE',     '' )
-SetMacro( 'ORGANIZATION','' )
+SetMacro( 'ORGANIZATION','Freedom' )
 
 SetStyle( 'C' )
 

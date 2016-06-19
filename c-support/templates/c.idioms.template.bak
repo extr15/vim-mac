@@ -23,10 +23,19 @@ static void<CURSOR>
 <SPLIT>	return <+return_value+>;
 }		/* -----  end of static function |FUNCTION_NAME|  ----- */
 == Idioms.main == map:im, shortcut:m  ==
-int main ( int argc, char *argv[] )
+#include	<stdlib.h>
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  main
+ *  Description:  
+ * =====================================================================================
+ */
+int
+main ( int argc, char *argv[] )
 {<CURSOR>
-    return 0;
-} /* ----------  end of function main  ---------- */
+<SPLIT>	return EXIT_SUCCESS;
+}				/* ----------  end of function main  ---------- */
 == Idioms.enum == map:ie, shortcut:e  ==
 enum |?ENUM_NAME| {<CURSOR>
 <SPLIT>};				/* ----------  end of enum |ENUM_NAME|  ---------- */
