@@ -66,7 +66,7 @@ set nocompatible  "去掉讨厌的有关vi一致性模式，避免以前版本�
 " 显示中文帮助
 if version >= 603
 	set helplang=cn
-	set encoding=utf-8
+	"set encoding=utf-8
 endif
 " 自动缩进
 set autoindent
@@ -414,10 +414,16 @@ let g:miniBufExplMapCTabSwitchBufs = 1
 let g:miniBufExplModSelTarget = 1
 
 
+let g:fencview_autodetect=1
+map <F11> :FencView<CR>
 "set iskeyword+=.
-set termencoding=utf-8
-set encoding=utf8
-set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
+"set termencoding=utf-8
+set encoding=utf-8
+let &termencoding=&encoding
+" 新建文件时文件编码默认为utf-8
+set fileencoding=utf-8
+" 打开文件时按照fileencodings指定的文件编码顺序进行检测
+set fileencodings=utf-8,ucs-bom,gbk,cp936,gb2312,gb18030
 
 autocmd FileType python set omnifunc=pythoncomplete#Complete
 
