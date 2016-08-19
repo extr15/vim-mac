@@ -1,26 +1,38 @@
-set sw=4
-set ts=4
-set et
+":finish
+
 "set smarttab
 "set smartindent
-set lbr
+" set lbr ；linebreak,应该关闭，否则中文显示时折行不会在一句话的内部，只会在空格的地方断开
 set fo+=mB
 set sm
 set selection=inclusive
 set wildmenu
 set mousemodel=popup
 " renyong
-set fdm=marker
+set fdm=syntax
+au FileType text set fdm=marker fo+=mM
+" help formatoptions 有
+" m：在多字节字符处可以折行，对中文特别有效（否则只在空白字符处折行）； --  这应该指的是输入模式下
+" M：在拼接两行时（重新格式化，或者是手工使用“J”命令），如果前一行的结尾或后一行的开头是多字节字符，则不插入空格，非常适合中文
+" 我想解决刚打开cpp文件时c-support有些功能没有调用的bug，然而下面的语句并没有作用,参考vim.txt 2016.07.28
+au FileType cpp source ~/.vim/ftplugin/c.vim
+au BufNewFile,BufRead *.{cpp,c,h,hpp,cc} set filetype=cpp
+
 let mapleader = ","
 let g:mapleader = ","
 nmap <leader>w :w!<cr>
-set clipboard=unnamedplus
+"set clipboard=unnamedplus "on mac, seems to not recognize this, and yy cmd
+"not copy to the reg *
+"共享剪贴板  
+set clipboard=unnamed 
 set go+=a "从vim中能复制到系统剪贴板
 set go+=b "水平滚动条
 map <C-F12> <esc>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<cr><cr>
 " insert current time
 "imap <F3> <C-R>=strftime("%Y%m%d %H:%M")<CR>
 imap <F3> <C-R>=strftime("%Y.%m.%d")<CR>
+" 让vimrc配置变更在vimrc中立即生效
+" autocmd BufWritePost $MYVIMRC source $MYVIMRC
 
 au FileType php setlocal dict+=~/.vim/dict/php_funclist.dict
 au FileType css setlocal dict+=~/.vim/dict/css.dict
@@ -31,6 +43,8 @@ au FileType javascript setlocal dict+=~/.vim/dict/javascript.dict
 au FileType html setlocal dict+=~/.vim/dict/javascript.dict
 au FileType html setlocal dict+=~/.vim/dict/css.dict
 "
+let g:pathogen_disabled = []
+
 "syntastic相关
 execute pathogen#infect()
 let g:syntastic_python_checkers=['pylint']
@@ -51,7 +65,11 @@ color desert     " 设置背景主题
 "color ron     " 设置背景主题  
 "color torte     " 设置背景主题  
 "set guifont=Courier_New:h10:cANSI   " 设置字体  
-set guifont=Monospace\ 13
+if has("gui_macvim")
+  set guifont=Monaco:h14
+else
+  set guifont=Monospace\ 13
+endif
 "autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
 autocmd InsertEnter * se cul    " 用浅色高亮当前行  
 set ruler           " 显示标尺  
@@ -71,11 +89,16 @@ endif
 " 自动缩进
 set autoindent
 set cindent
+" 防止insert模式下 #被自动移到行首，去掉缩进
+set nosmartindent
+set cinkeys-=0#
+set indentkeys-=0#
+
 " Tab键的宽度
-set tabstop=4
-" 统一缩进为4
-set softtabstop=4
-set shiftwidth=4
+set tabstop=2
+" 统一缩进为2
+set softtabstop=2
+set shiftwidth=2
 " 使用空格代替制表符
 set expandtab
 " 在行和段开始处使用制表符
@@ -172,6 +195,7 @@ func SetTitle()
 	endif
 	"新建文件后，自动定位到文件末尾
 endfunc 
+
 autocmd BufNewFile * normal G
 
 
@@ -197,7 +221,6 @@ imap <C-a> <Esc>^
 imap <C-e> <Esc>$
 vmap <C-c> "+y
 set mouse=v
-"set clipboard=unnamed
 "去空行  
 nnoremap <F2> :g/^\s*$/d<CR> 
 "比较文件  
@@ -299,8 +322,6 @@ autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
 set completeopt=preview,menu 
 "允许插件  
 "filetype plugin on
-"共享剪贴板  
-"set clipboard+=unnamed 
 "自动保存
 set autowrite
 "set ruler                   " 打开状态栏标尺
@@ -471,6 +492,9 @@ Bundle 'tacahiroy/ctrlp-funky'
 Bundle 'jsbeautify'
 Bundle 'The-NERD-Commenter'
 Bundle 'fholgado/minibufexpl.vim'
+Bundle 'rdnetto/YCM-Generator'
+Bundle 'CodeFalling/fcitx-vim-osx'
+Bundle 'lyuts/vim-rtags'
 "django
 "Bundle 'django_templates.vim'
 "Bundle 'Django-Projects'
@@ -495,6 +519,19 @@ let g:ctrlp_extensions = ['funky']
 
 let NERDTreeIgnore=['\.pyc']
 
+"YCM
+let g:ycm_confirm_extra_conf = 0
+let g:syntastic_always_populate_loc_list = 1
+let g:ycm_error_symbol = '>>'
+let g:ycm_warning_symbol = '>*'
+nnoremap gd :YcmCompleter GoTo<CR>
+nnoremap gc :YcmCompleter GoToDeclaration<CR>
+nmap <F4> :YcmDiags<CR>
+" let g:ycm_filetype_whitelist = {'text':1}; this cmd will overwrite default
+" set:  {'*':1}
+let g:ycm_filetype_whitelist = {'text':1,'txt':1,'*':1}
+let g:ycm_filetype_blacklist = {'notes': 1, 'netrw': 1, 'unite': 1, 'tagbar': 1, 'pandoc': 1, 'mail': 1, 'vimwiki': 1, 'infolog': 1, 'qf': 1}
+
 "重定向命令输出到新窗口
 " http://vim.wikia.com/wiki/Capture_ex_command_output
 function! TabMessage(cmd)
@@ -513,3 +550,5 @@ endfunction
 command! -nargs=+ -complete=command TabMessage call TabMessage(<q-args>)
 
 set showcmd "上一句showcmd好像被覆盖了
+fixdel
+set backspace=indent,eol,start
