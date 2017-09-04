@@ -13,6 +13,40 @@ set fdm=syntax
 au FileType text set fdm=marker fo+=mM
 "sometimes open a txt, then open a cpp in the same vim
 au BufNewFile,BufRead *.{cpp,c,cc,cxx,h,hpp} setlocal fdm=syntax
+" json file and elzr/vim-json plugin. did_indent=1, otherwise will very slow opening a 10M file
+au BufNewFile,BufRead *.json set fdm=indent syntax=json 
+au BufNewFile,BufRead *.json let b:did_indent=1
+"avoid namespace content indent, ref: http://stackoverflow.com/questions/2549019/how-to-avoid-namespace-content-indentation-in-vim
+set cino=N-s
+
+" back to the parent when in tree/blob.
+autocmd User fugitive 
+  \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
+  \   nnoremap <buffer> .. :edit %:h<CR> |
+  \ endif
+
+
+" Don't indent template
+" ref: http://stackoverflow.com/questions/2549019/how-to-avoid-namespace-content-indentation-in-vim
+" http://stackoverflow.com/questions/387792/vim-indentation-for-c-templates -- this code not work for me
+function! CppNoTemplateIndent()
+  let l:cline_num = line('.')
+  let l:pline_num = prevnonblank(l:cline_num - 1)
+  let l:pline = getline(l:pline_num)
+  let l:retv = cindent('.')
+  while l:pline =~# '\(^\s*{\s*\|^\s*//\|^\s*/\*\|\*/\s*$\)'
+    let l:pline_num = prevnonblank(l:pline_num - 1)
+    let l:pline = getline(l:pline_num)
+  endwhile
+  if l:pline =~# '^\s*template.*'
+    let l:retv = 0
+  endif
+  return l:retv
+endfunction
+
+if has("autocmd")
+    autocmd BufEnter *.{cc,cxx,cpp,h,hh,hpp,hxx} setlocal indentexpr=CppNoTemplateIndent()
+endif
 
 " help formatoptions 有
 " m：在多字节字符处可以折行，对中文特别有效（否则只在空白字符处折行）； --  这应该指的是输入模式下
@@ -20,7 +54,7 @@ au BufNewFile,BufRead *.{cpp,c,cc,cxx,h,hpp} setlocal fdm=syntax
 " 我想解决刚打开cpp文件时c-support有些功能没有调用的bug，然而下面的语句并没有作用,参考vim.txt 2016.07.28
 "au FileType cpp source ~/.vim/ftplugin/c.vim
 au BufNewFile,BufRead *.{cpp,c,h,hpp,cc} set filetype=cpp
-au BufNewFile,BufRead *.{cpp,c,h,hpp,cc} set textwidth=80
+"au BufNewFile,BufRead *.{cpp,c,h,hpp,cc} set textwidth=80
 au BufNewFile,BufRead *.{log,LOG,info,INFO} set filetype=text
 
 "csupport
@@ -220,10 +254,15 @@ map! <C-Z> <Esc>zzi
 map! <C-O> <C-Y>,
 map <C-A> ggVG$"+y
 map <F12> gg=G
-map <C-w> <C-w>w
-imap <C-k> <C-y>,
-imap <C-t> <C-q><TAB>
-imap <C-j> <ESC>
+" 窗口切换
+"map <C-w> <C-w>w " can not enable this because conflict with below
+map <C-j> <C-w><C-j>
+map <C-k> <C-w><C-k>
+map <C-h> <C-w><C-h>
+map <C-l> <C-w><C-l>
+"imap <C-k> <C-y>,
+"imap <C-t> <C-q><TAB>
+"imap <C-j> <ESC>
 " 选中状态下 Ctrl+c 复制
 "map <C-v> "*pa
 imap <C-v> <Esc>"*pa
@@ -232,7 +271,9 @@ imap <C-e> <Esc>$
 vmap <C-c> "+y
 set mouse=v
 "去空行  
-nnoremap <F2> :g/^\s*$/d<CR> 
+"nnoremap <F2> :g/^\s*$/d<CR> 
+"拷贝当前路径和文件名
+noremap <silent> <F2> :let @*=expand("%:p")<CR>
 "比较文件  
 nnoremap <C-F2> :vert diffsplit 
 "nnoremap <Leader>fu :CtrlPFunky<Cr>
@@ -483,14 +524,24 @@ let g:indentLine_char = '┊'
 "ndle 'tpope/vim-rails.git'
 " vim-scripts repos
 Bundle 'L9'
-Bundle 'FuzzyFinder'
+"Bundle 'FuzzyFinder'
 " non github repos
-Bundle 'https://github.com/wincent/command-t.git'
+"Bundle 'https://github.com/wincent/command-t.git'
+Bundle 'Shougo/unite.vim'
+Bundle 'Shougo/vimproc.vim'
+"MRU Most Recently Used
+Bundle 'Shougo/neomru.vim'
+"Saves yank history includes unite.vim history/yank source.
+Bundle 'Shougo/neoyank.vim'
+Bundle 'Shougo/unite-outline'
+"A source of unite.vim for history of command/search.
+Bundle 'thinca/vim-unite-history'
+Bundle 'devjoe/vim-codequery'
 "Bundle 'Auto-Pairs'
 Bundle 'extr15/Auto-Pairs'
 Bundle 'python-imports.vim'
 Bundle 'CaptureClipboard'
-Bundle 'ctrlp-modified.vim'
+"Bundle 'ctrlp-modified.vim'
 Bundle 'last_edit_marker.vim'
 Bundle 'synmark.vim'
 "Bundle 'Python-mode-klen'
@@ -501,8 +552,8 @@ Bundle 'synmark.vim'
 "Bundle 'jslint.vim'
 "Bundle "pangloss/vim-javascript"
 Bundle 'Vim-Script-Updater'
-Bundle 'ctrlp.vim'
-Bundle 'tacahiroy/ctrlp-funky'
+"Bundle 'ctrlp.vim'
+"Bundle 'tacahiroy/ctrlp-funky'
 "Bundle 'jsbeautify'
 Bundle 'The-NERD-Commenter'
 Bundle 'fholgado/minibufexpl.vim'
@@ -513,6 +564,13 @@ Bundle 'derekwyatt/vim-fswitch'
 Bundle 'hynek/vim-python-pep8-indent'
 Bundle 'LaTeX-Box-Team/LaTeX-Box'
 Bundle 'mhinz/vim-hugefile'
+Bundle 'elzr/vim-json'
+Bundle 'Konfekt/FastFold'
+Bundle 'octol/vim-cpp-enhanced-highlight'
+Bundle 'rhysd/vim-clang-format'
+Bundle 'airblade/vim-gitgutter'
+Bundle 'mileszs/ack.vim'
+"Bundle 'c-support'
 "django
 "Bundle 'django_templates.vim'
 "Bundle 'Django-Projects'
@@ -525,20 +583,39 @@ let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 
 let g:LatexBox_latexmk_options = " -pdflatex='xelatex -synctex=1 \%O \%S' "
-let g:LatexBox_viewer = "skim "
+let g:LatexBox_viewer = "/Applications/Skim.app/Contents/MacOS/Skim "
 let g:tex_no_math = 1
+
+"ack.vim, config to use ag
+let g:ackprg = 'ag --vimgrep'
 
 filetype plugin indent on     " required!
 "
 "ctrlp设置
 "
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.png,*.jpg,*.gif     " MacOSX/Linux
-set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.pyc,*.png,*.jpg,*.gif  " Windows
+"set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.png,*.jpg,*.gif     " MacOSX/Linux
+"set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.pyc,*.png,*.jpg,*.gif  " Windows
 
-let g:hugefile_trigger_size=30
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-let g:ctrlp_custom_ignore = '\v\.(exe|so|dll)$'
-let g:ctrlp_extensions = ['funky']
+"unite
+"let g:unite_source_rec_async_command='ag --path-to-ignore /Users/renyong/software/software_git/config/.agignore --nocolor --nogroup --ignore ".hg" --ignore ".svn" --ignore ".git" --ignore ".bzr" --hidden -g ""'
+let g:unite_source_rec_async_command =
+    \ ['ag', '-p ~/.agignore', '--follow', '--nogroup', '--nocolor', '--hidden', '-g', '']
+nnoremap <silent> <leader>ug  :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard<CR>
+nnoremap <leader>ur :<C-u>Unite -start-insert file_rec/async<CR>
+nnoremap <leader>uf :<C-u>Unite file<CR>
+nnoremap <silent> <leader>ub :<C-u>Unite buffer bookmark<CR>
+nnoremap <silent><leader>ul :<C-u>Unite -no-quit line<CR>
+nnoremap <silent><leader>ui :<C-u>Unite -no-quit -ignorecase line<CR>
+
+"in case of you input very slowly
+"ref:https://github.com/Yggdroot/indentLine/issues/48
+"'let g:indentLine_faster = 1' can make the performance better, but indentLine will display on the non leading spaces. In my frequent use, I don't have the performance issue, so I don't let it to be default
+let g:indentLine_faster = 1
+
+"let g:hugefile_trigger_size=30
+"let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+"let g:ctrlp_custom_ignore = '\v\.(exe|so|dll)$'
+"let g:ctrlp_extensions = ['funky']
 
 let NERDTreeIgnore=['\.pyc']
 
@@ -551,11 +628,21 @@ let g:ycm_disable_for_files_larger_than_kb=500
 nnoremap gd :YcmCompleter GoTo<CR>
 nnoremap gc :YcmCompleter GoToDeclaration<CR>
 nmap <F4> :YcmDiags<CR>
+map <F7> :YcmCompleter FixIt<CR>
 " let g:ycm_filetype_whitelist = {'text':1}; this cmd will overwrite default
 " set:  {'*':1}
 "let g:ycm_filetype_whitelist = {'text':1,'txt':1,'*':1}
-"let g:ycm_filetype_blacklist = {'notes': 1, 'netrw': 1, 'unite': 1, 'tagbar': 1, 'pandoc': 1, 'mail': 1, 'vimwiki': 1, 'infolog': 1, 'qf': 1}
+"let g:ycm_filetype_blacklist = {'notes': 1, 'markdown': 1, 'netrw': 1, 'unite': 1, 'tagbar': 1, 'pandoc': 1, 'mail': 1, 'vimwiki': 1, 'infolog': 1, 'qf': 1}
+let g:ycm_filetype_blacklist = {'tex': 1, 'notes': 1, 'markdown': 1, 'netrw': 1, 'unite': 1, 'tagbar': 1, 'pandoc': 1, 'mail': 1, 'vimwiki': 1, 'infolog': 1, 'qf': 1}
 
+"rtags
+noremap <Leader>j :call rtags#JumpTo(g:SAME_WINDOW)<CR>
+noremap <Leader>l :call rtags#JumpTo(g:SAME_WINDOW, { '--declaration-only' : '' })<CR>
+noremap <Leader>b :call rtags#JumpBack()<CR>
+noremap <Leader>i :call rtags#SymbolInfo()<CR>
+noremap <Leader>f :call rtags#FindRefs()<CR>
+
+"switch between .cpp & .h
 nmap fs :FSHere<CR>
 
 "重定向命令输出到新窗口

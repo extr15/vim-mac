@@ -1,4 +1,3 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =2
-let g:netrw_dirhist_1='/home/renyong/.vim/c-support/templates'
-let g:netrw_dirhist_2='/Users/renyong/.vim/c-support/templates'
+let g:netrw_dirhist_cnt =1
+let g:netrw_dirhist_1='/Users/renyong/.vim/bundle/c-support/c-support/templates'
