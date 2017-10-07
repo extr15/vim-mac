@@ -537,6 +537,7 @@ Bundle 'Shougo/unite-outline'
 "A source of unite.vim for history of command/search.
 Bundle 'thinca/vim-unite-history'
 Bundle 'devjoe/vim-codequery'
+Bundle 'skwp/greplace.vim'
 "Bundle 'Auto-Pairs'
 Bundle 'extr15/Auto-Pairs'
 Bundle 'python-imports.vim'
@@ -587,7 +588,9 @@ let g:LatexBox_viewer = "/Applications/Skim.app/Contents/MacOS/Skim "
 let g:tex_no_math = 1
 
 "ack.vim, config to use ag
-let g:ackprg = 'ag --vimgrep'
+"let g:ackprg = 'ag --vimgrep'
+let g:ackprg = 'ag '
+nnoremap <Leader>a :Ack<Enter>
 
 filetype plugin indent on     " required!
 "
