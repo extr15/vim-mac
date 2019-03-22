@@ -18,6 +18,9 @@ au BufNewFile,BufRead *.json set fdm=indent syntax=json
 au BufNewFile,BufRead *.json let b:did_indent=1
 "avoid namespace content indent, ref: http://stackoverflow.com/questions/2549019/how-to-avoid-namespace-content-indentation-in-vim
 set cino=N-s
+au BufNewFile,BufRead *.{md,markdown,MD} :command! Mp MarkdownPreview
+au BufNewFile,BufRead *.{md,markdown,MD} :command! Lp LivedownPreview
+au BufNewFile,BufRead *.{md,markdown,MD} :command! Lk LivedownKill
 
 " back to the parent when in tree/blob.
 autocmd User fugitive 
@@ -176,8 +179,8 @@ au BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn}   set filetype=mkd
 au BufRead,BufNewFile *.{go}   set filetype=go
 au BufRead,BufNewFile *.{js}   set filetype=javascript
 "rkdown to HTML  
-nmap md :!~/.vim/markdown.pl % > %.html <CR><CR>
-nmap fi :!firefox %.html & <CR><CR>
+"nmap md :!~/.vim/markdown.pl % > %.html <CR><CR>
+"nmap fi :!firefox %.html & <CR><CR>
 nmap \ \cc
 vmap \ \cc
 
@@ -265,7 +268,12 @@ map <C-l> <C-w><C-l>
 "imap <C-j> <ESC>
 " 选中状态下 Ctrl+c 复制
 "map <C-v> "*pa
-imap <C-v> <Esc>"*pa
+"imap <C-v> <Esc>"*pa
+"inoremap <C-V> <C-R>+
+"imap <C-V> <C-R>+
+" 2018.09.16 use <C-b> to paste as C-V> seems conflict with system paste.
+inoremap <C-b> <C-R>*
+"noremap <C-V> <C-R>+
 imap <C-a> <Esc>^
 imap <C-e> <Esc>$
 vmap <C-c> "+y
@@ -571,6 +579,7 @@ Bundle 'octol/vim-cpp-enhanced-highlight'
 Bundle 'rhysd/vim-clang-format'
 Bundle 'airblade/vim-gitgutter'
 Bundle 'mileszs/ack.vim'
+Bundle 'inkarkat/vim-mark'
 "Bundle 'c-support'
 "django
 "Bundle 'django_templates.vim'
@@ -578,6 +587,17 @@ Bundle 'mileszs/ack.vim'
 
 "Bundle 'FredKSchott/CoVim'
 "Bundle 'djangojump'
+Bundle 'iamcco/mathjax-support-for-mkdp'
+Bundle 'iamcco/markdown-preview.vim'
+Bundle 'tpope/vim-repeat'
+Bundle 'tpope/vim-surround'
+Bundle 'majutsushi/tagbar'
+Bundle 'shime/vim-livedown'
+
+"Bundle 'godlygeek/tabular'
+"Bundle 'plasticboy/vim-markdown'
+
+Bundle 'gabrielelana/vim-markdown'
 " ...
 let g:html_indent_inctags = "html,body,head,tbody"
 let g:html_indent_script1 = "inc"
@@ -587,10 +607,32 @@ let g:LatexBox_latexmk_options = " -pdflatex='xelatex -synctex=1 \%O \%S' "
 let g:LatexBox_viewer = "/Applications/Skim.app/Contents/MacOS/Skim "
 let g:tex_no_math = 1
 
+" tagbar
+let g:tagbar_left = 1
+nnoremap tb :TagbarToggle<CR>
+" markdown-preview
+let g:mkdp_refresh_slow = 0
+" vim-surround. `q` means `quote`, this is for markdown file.
+xmap q <Plug>VSurround`
+:xnoremap S3 <esc>`<O<esc>S```<esc>`>o<esc>S```<esc>k$
 "ack.vim, config to use ag
 "let g:ackprg = 'ag --vimgrep'
 let g:ackprg = 'ag '
 nnoremap <Leader>a :Ack<Enter>
+
+" vim-mark
+"let g:mwDefaultHighlightingPalette = 'extended'
+"let g:mwDefaultHighlightingNum = 9
+"let g:mwDefaultHighlightingPalette = [
+"		\   { 'ctermbg':'Cyan',       'ctermfg':'Black', 'guibg':'#8CCBEA', 'guifg':'Black' },
+"		\   { 'ctermbg':'Green',      'ctermfg':'Black', 'guibg':'#A4E57E', 'guifg':'Black' },
+"		\   { 'ctermbg':'Yellow',     'ctermfg':'Black', 'guibg':'#FFDB72', 'guifg':'Black' },
+"		\   { 'ctermbg':'Red',        'ctermfg':'Black', 'guibg':'#FF7272', 'guifg':'Black' },
+"		\   { 'ctermbg':'Blue',       'ctermfg':'Black', 'guibg':'#9999FF', 'guifg':'Black' },
+"		\   { 'ctermbg':'Blue',       'ctermfg':'White', 'guibg':'#0000FF', 'guifg':'#F0F0FF' },
+"		\   { 'ctermbg':'DarkRed',    'ctermfg':'White', 'guibg':'#FF0000', 'guifg':'#FFFFFF' },
+"		\   { 'ctermbg':'Magenta',    'ctermfg':'Black', 'guibg':'#FFA1C6', 'guifg':'#80005D' },
+"\]
 
 filetype plugin indent on     " required!
 "
@@ -604,9 +646,9 @@ filetype plugin indent on     " required!
 let g:unite_source_rec_async_command =
     \ ['ag', '-p ~/.agignore', '--follow', '--nogroup', '--nocolor', '--hidden', '-g', '']
 nnoremap <silent> <leader>ug  :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard<CR>
-nnoremap <leader>ur :<C-u>Unite -start-insert file_rec/async<CR>
-nnoremap <leader>uf :<C-u>Unite file<CR>
-nnoremap <silent> <leader>ub :<C-u>Unite buffer bookmark<CR>
+nnoremap <leader>ur :<C-u>Unite -start-insert -ignorecase file_rec/async<CR>
+nnoremap <leader>uf :<C-u>Unite -ignorecase file<CR>
+nnoremap <silent> <leader>ub :<C-u>Unite -ignorecase buffer bookmark<CR>
 nnoremap <silent><leader>ul :<C-u>Unite -no-quit line<CR>
 nnoremap <silent><leader>ui :<C-u>Unite -no-quit -ignorecase line<CR>
 
@@ -623,6 +665,8 @@ let g:indentLine_faster = 1
 let NERDTreeIgnore=['\.pyc']
 
 "YCM
+"let g:ycm_path_to_python_interpreter = 'python3'
+let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'
 let g:ycm_confirm_extra_conf = 0
 let g:syntastic_always_populate_loc_list = 1
 let g:ycm_error_symbol = '>>'
