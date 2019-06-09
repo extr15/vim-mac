@@ -28,6 +28,31 @@ autocmd User fugitive
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
 
+function! Review(flag)
+  let l:back_day = [1, 2, 4, 7, 15, 30, 60, 150, 365]
+  let l:last_line_num = 0
+  if a:flag == 0
+    let l:last_line_num = line('$')
+  else
+    let l:last_line_num = line('.')
+  endif
+  let l:review_line = [l:last_line_num]
+  let l:review_day = [getline(l:last_line_num)]
+  for l:day in l:back_day
+    if l:last_line_num > l:day
+      let l:cur_line = l:last_line_num - l:day
+      call add(l:review_line, l:cur_line)
+      call add(l:review_day, getline(l:cur_line))
+    endif
+  endfor
+  "echo l:review_line
+  "echo l:review_day
+  cexpr l:review_day
+  caddexpr "" 
+  cwindow
+endfunction
+command! Review call Review(0)
+command! ReviewCur call Review(1)
 
 " Don't indent template
 " ref: http://stackoverflow.com/questions/2549019/how-to-avoid-namespace-content-indentation-in-vim
