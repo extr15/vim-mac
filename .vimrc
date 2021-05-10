@@ -527,7 +527,7 @@ Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-fugitive'
 "Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
 Bundle 'Yggdroot/indentLine'
-Bundle 'Valloric/YouCompleteMe'
+"Bundle 'Valloric/YouCompleteMe'
 Bundle 'hari-rangarajan/CCTree'
 let g:indentLine_char = '┊'
 "ndle 'tpope/vim-rails.git'
@@ -600,6 +600,12 @@ Bundle 'shime/vim-livedown'
 
 Bundle 'gabrielelana/vim-markdown'
 Bundle 'nelstrom/vim-visual-star-search'
+
+Bundle 'junegunn/fzf', {'do' : {-> fzf#install() } }
+Bundle 'junegunn/fzf.vim'
+Bundle 'mkitt/tabline.vim'
+Bundle 'rickhowe/diffchar.vim'
+
 " ...
 let g:html_indent_inctags = "html,body,head,tbody"
 let g:html_indent_script1 = "inc"
@@ -610,7 +616,10 @@ let g:LatexBox_viewer = "/Applications/Skim.app/Contents/MacOS/Skim "
 let g:tex_no_math = 1
 
 " tagbar
-let g:tagbar_left = 1
+"let g:tagbar_left = 1
+" display more compact or more spacious.
+let g:tagbar_indent = 0
+
 nnoremap tb :TagbarToggle<CR>
 " markdown-preview
 let g:mkdp_refresh_slow = 0
@@ -622,6 +631,8 @@ xmap q <Plug>VSurround`
 let g:ackprg = 'ag '
 nnoremap <Leader>a :Ack<Enter>
 
+"override vim-gitgutter highlight.vim
+highlight link diffRemoved String
 " vim-mark
 "let g:mwDefaultHighlightingPalette = 'extended'
 "let g:mwDefaultHighlightingNum = 9
@@ -665,6 +676,7 @@ let g:indentLine_faster = 1
 "let g:ctrlp_extensions = ['funky']
 
 let NERDTreeIgnore=['\.pyc']
+let g:NERDTreeChDirMode = 2
 
 "YCM
 "let g:ycm_path_to_python_interpreter = 'python3'
@@ -674,6 +686,7 @@ let g:syntastic_always_populate_loc_list = 1
 let g:ycm_error_symbol = '>>'
 let g:ycm_warning_symbol = '>*'
 let g:ycm_disable_for_files_larger_than_kb=500
+let g:ycm_auto_hover=''
 nnoremap gd :YcmCompleter GoTo<CR>
 nnoremap gc :YcmCompleter GoToDeclaration<CR>
 nmap <F4> :YcmDiags<CR>
@@ -692,7 +705,37 @@ noremap <Leader>i :call rtags#SymbolInfo()<CR>
 noremap <Leader>f :call rtags#FindRefs()<CR>
 
 "switch between .cpp & .h
-nmap fs :FSHere<CR>
+nmap gs :FSHere<CR>
+
+"FZF
+nnoremap <silent> <C-p> :GFiles<CR>
+nnoremap <silent> <Leader>ah :Ag <C-R><C-W><CR>
+vnoremap <silent> <Leader>ah y:Ag <C-r>=fnameescape(@")<CR><CR>
+
+function! s:with_git_root()
+  let root = systemlist('git rev-parse --show-toplevel')[0]
+  return v:shell_error ? {} : {'dir': root}
+endfunction
+
+command! -nargs=* AgGit
+  \ call fzf#vim#ag(<q-args>, extend(s:with_git_root(), fzf#vim#with_preview()))
+
+nnoremap <silent> <Leader>ag :AgGit <C-R><C-W><CR>
+vnoremap <silent> <Leader>ag y:AgGit <C-r>=fnameescape(@")<CR><CR>
+"Ctrl-A Ctrl-Q to select all and build quick fix
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+  cc
+endfunction
+
+let g:fzf_action = {
+  \ 'ctrl-q': function('s:build_quickfix_list'),
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 
 "重定向命令输出到新窗口
 " http://vim.wikia.com/wiki/Capture_ex_command_output
