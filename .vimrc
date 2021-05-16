@@ -495,6 +495,10 @@ let g:miniBufExplMapWindowNavArrows = 1
 let g:miniBufExplMapCTabSwitchBufs = 1
 let g:miniBufExplModSelTarget = 1
 
+"https://vim.fandom.com/wiki/Show_tab_number_in_your_tab_line
+if has('gui')
+  set guitablabel=%N:\ %t%M
+endif
 
 let g:fencview_autodetect=1
 map <F11> :FencView<CR>
@@ -566,7 +570,7 @@ Bundle 'Vim-Script-Updater'
 "Bundle 'tacahiroy/ctrlp-funky'
 "Bundle 'jsbeautify'
 Bundle 'The-NERD-Commenter'
-Bundle 'fholgado/minibufexpl.vim'
+"Bundle 'fholgado/minibufexpl.vim'
 Bundle 'rdnetto/YCM-Generator'
 Bundle 'CodeFalling/fcitx-vim-osx'
 Bundle 'lyuts/vim-rtags'
@@ -605,6 +609,7 @@ Bundle 'junegunn/fzf', {'do' : {-> fzf#install() } }
 Bundle 'junegunn/fzf.vim'
 Bundle 'mkitt/tabline.vim'
 Bundle 'rickhowe/diffchar.vim'
+Bundle 'preservim/nerdtree'
 
 " ...
 let g:html_indent_inctags = "html,body,head,tbody"
@@ -709,6 +714,7 @@ nmap gs :FSHere<CR>
 
 "FZF
 nnoremap <silent> <C-p> :GFiles<CR>
+nnoremap <silent> <S-b> :Buffers<CR>
 nnoremap <silent> <Leader>ah :Ag <C-R><C-W><CR>
 vnoremap <silent> <Leader>ah y:Ag <C-r>=fnameescape(@")<CR><CR>
 
