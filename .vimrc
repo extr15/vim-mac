@@ -735,6 +735,9 @@ function! s:build_quickfix_list(lines)
   cc
 endfunction
 
+command! -bang -nargs=* AgRaw                              
+  \ call fzf#vim#ag_raw(<q-args>,fzf#vim#with_preview(), <bang>0)
+
 let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
   \ 'ctrl-t': 'tab split',
