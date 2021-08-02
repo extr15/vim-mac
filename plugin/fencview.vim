@@ -1117,7 +1117,7 @@ function! s:FencHandleData() "{{{1
     endif
     for line in fbody
         let lnr+=1
-        call s:FencProgressBar(100*lnr/bodylen,' Processing... ',)
+        "call s:FencProgressBar(100*lnr/bodylen,' Processing... ',)
         let ci=0
         let ch="\x01"
         while ch!=''
