@@ -70,9 +70,12 @@ nmap <leader>w :w!<cr>
 "set clipboard=unnamedplus "on mac, seems to not recognize this, and yy cmd
 "not copy to the reg *
 "共享剪贴板  
-set clipboard=unnamed 
+set clipboard=unnamedplus 
 set go+=a "从vim中能复制到系统剪贴板
 set go+=b "水平滚动条
+" 在cmdline模式下能从系统剪贴板复制
+cnoremap <S-Insert> <C-R>*
+cnoremap <C-v> <C-R>*
 map <C-F12> <esc>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<cr><cr>
 " insert current time
 "imap <F3> <C-R>=strftime("%Y%m%d %H:%M")<CR>
@@ -114,7 +117,8 @@ color desert     " 设置背景主题
 if has("gui_macvim")
   set guifont=Monaco:h13
 else
-  set guifont=Monospace\ 13
+  "set guifont=Monospace\ 13
+  set guifont=Monaco\ 13
 endif
 "autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
 autocmd InsertEnter * se cul    " 用浅色高亮当前行  
@@ -269,7 +273,7 @@ map <C-l> <C-w><C-l>
 "imap <C-j> <ESC>
 " 选中状态下 Ctrl+c 复制
 "map <C-v> "*pa
-"imap <C-v> <Esc>"*pa
+imap <C-v> <Esc>"*pa
 "inoremap <C-V> <C-R>+
 "imap <C-V> <C-R>+
 " 2018.09.16 use <C-b> to paste as C-V> seems conflict with system paste.
@@ -531,24 +535,24 @@ Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-fugitive'
 "Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
 Bundle 'Yggdroot/indentLine'
-"Bundle 'Valloric/YouCompleteMe'
-Bundle 'hari-rangarajan/CCTree'
+Bundle 'Valloric/YouCompleteMe'
+"Bundle 'hari-rangarajan/CCTree'
 let g:indentLine_char = '┊'
 "ndle 'tpope/vim-rails.git'
 " vim-scripts repos
-Bundle 'L9'
+"Bundle 'L9'
 "Bundle 'FuzzyFinder'
 " non github repos
 "Bundle 'https://github.com/wincent/command-t.git'
-Bundle 'Shougo/unite.vim'
-Bundle 'Shougo/vimproc.vim'
+"Bundle 'Shougo/unite.vim'
+"Bundle 'Shougo/vimproc.vim'
 "MRU Most Recently Used
-Bundle 'Shougo/neomru.vim'
+"Bundle 'Shougo/neomru.vim'
 "Saves yank history includes unite.vim history/yank source.
-Bundle 'Shougo/neoyank.vim'
-Bundle 'Shougo/unite-outline'
+"Bundle 'Shougo/neoyank.vim'
+"Bundle 'Shougo/unite-outline'
 "A source of unite.vim for history of command/search.
-Bundle 'thinca/vim-unite-history'
+"Bundle 'thinca/vim-unite-history'
 Bundle 'devjoe/vim-codequery'
 Bundle 'skwp/greplace.vim'
 "Bundle 'Auto-Pairs'
@@ -611,6 +615,7 @@ Bundle 'mkitt/tabline.vim'
 Bundle 'rickhowe/diffchar.vim'
 Bundle 'preservim/nerdtree'
 
+Bundle 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
 " ...
 let g:html_indent_inctags = "html,body,head,tbody"
 let g:html_indent_script1 = "inc"
@@ -682,6 +687,7 @@ let g:indentLine_faster = 1
 
 let NERDTreeIgnore=['\.pyc']
 let g:NERDTreeChDirMode = 2
+let NERDTreeCustomOpenArgs = {'file': {'reuse': 'currenttab', 'where': 'p', 'keepopen':1}, 'dir': {}}
 
 "YCM
 "let g:ycm_path_to_python_interpreter = 'python3'
@@ -737,6 +743,10 @@ endfunction
 
 command! -bang -nargs=* AgRaw                              
   \ call fzf#vim#ag_raw(<q-args>,fzf#vim#with_preview(), <bang>0)
+
+command! -nargs=* AgRawGit
+  \ call fzf#vim#ag_raw(<q-args>, extend(s:with_git_root(), fzf#vim#with_preview()))
+nnoremap <silent> <Leader>rg :AgRawGit -w <C-R><C-W><CR>
 
 let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
