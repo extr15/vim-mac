@@ -1094,6 +1094,11 @@ function! s:FencHandleData() "{{{1
     if filename=='' || filename==s:FencWinName
         return
     endif
+    if !filereadable(filename)
+        "let s:UTF8_error=0
+        let s:FencRes="CAN_NOT_READ"
+        return
+    endif
     let A_fbody=readfile(filename,'b')
     if A_fbody==[]
         return
@@ -1215,6 +1220,9 @@ function! s:FencDetectFileEncoding() "{{{1
     call s:FencInitVar()
 
     call s:FencHandleData()
+    if s:FencRes=="CAN_NOT_READ"
+        return
+    endif
 
     " VimCrypt
     if s:FencRes=="VimCrypt"
