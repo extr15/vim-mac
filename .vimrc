@@ -9,6 +9,7 @@ set selection=inclusive
 set wildmenu
 set mousemodel=popup
 " renyong
+set tabpagemax=50
 set fdm=syntax
 au FileType text set fdm=marker fo+=mM
 "sometimes open a txt, then open a cpp in the same vim
@@ -467,8 +468,9 @@ let Tlist_Exist_OnlyWindow = 1  " 如果只有一个buffer，kill窗口也kill�
 "设置tags  
 set tags=tags;  
 set autochdir 
-autocmd BufEnter * silent! lcd %:p:h
-
+"autocmd BufEnter * silent! lcd %:p:h
+"skip fugitive git object
+autocmd BufEnter * silent! if expand('%:p') !~ '://' | :lchdir %:p:h | endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "其他东东
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -826,9 +828,9 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-" Use `[c` and `]c` to navigate diagnostics
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
+" Use `[d` and `]d` to navigate diagnostics
+nmap <silent> [d <Plug>(coc-diagnostic-prev)
+nmap <silent> ]d <Plug>(coc-diagnostic-next)
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
