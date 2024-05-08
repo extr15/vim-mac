@@ -111,7 +111,12 @@ syntax on
 "set cuc
 set shortmess=atI   " 启动的时候不显示那个援助乌干达儿童的提示  
 "set go=             " 不要图形按钮  
-color desert     " 设置背景主题  
+"color desert     " 设置背景主题  
+set background=dark
+let g:solarized_italic=0
+"color solarized
+let g:gruvbox_italic=0
+color gruvbox
 "color ron     " 设置背景主题  
 "color torte     " 设置背景主题  
 "set guifont=Courier_New:h10:cANSI   " 设置字体  
@@ -578,13 +583,13 @@ Bundle 'Vim-Script-Updater'
 "Bundle 'jsbeautify'
 Bundle 'The-NERD-Commenter'
 "Bundle 'fholgado/minibufexpl.vim'
-Bundle 'rdnetto/YCM-Generator'
+"Bundle 'rdnetto/YCM-Generator'
 Bundle 'CodeFalling/fcitx-vim-osx'
 Bundle 'lyuts/vim-rtags'
 Bundle 'derekwyatt/vim-fswitch'
 Bundle 'hynek/vim-python-pep8-indent'
 Bundle 'LaTeX-Box-Team/LaTeX-Box'
-Bundle 'mhinz/vim-hugefile'
+"Bundle 'mhinz/vim-hugefile'
 Bundle 'elzr/vim-json'
 Bundle 'Konfekt/FastFold'
 Bundle 'octol/vim-cpp-enhanced-highlight'
@@ -625,7 +630,10 @@ Bundle 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
 Bundle 'aklt/plantuml-syntax'
 Bundle 'weirongxu/plantuml-previewer.vim'
 Bundle 'tyru/open-browser.vim'
-
+Bundle 'will133/vim-dirdiff'
+Bundle 'vim-scripts/LargeFile'
+Bundle 'easymotion/vim-easymotion'
+Bundle 'vimwiki/vimwiki'
 " ...
 let g:html_indent_inctags = "html,body,head,tbody"
 let g:html_indent_script1 = "inc"
@@ -677,6 +685,7 @@ filetype plugin indent on     " required!
 "set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.png,*.jpg,*.gif     " MacOSX/Linux
 "set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.pyc,*.png,*.jpg,*.gif  " Windows
 
+if 0
 "unite
 "let g:unite_source_rec_async_command='ag --path-to-ignore /Users/renyong/software/software_git/config/.agignore --nocolor --nogroup --ignore ".hg" --ignore ".svn" --ignore ".git" --ignore ".bzr" --hidden -g ""'
 let g:unite_source_rec_async_command =
@@ -687,6 +696,7 @@ nnoremap <leader>uf :<C-u>Unite -ignorecase file<CR>
 nnoremap <silent> <leader>ub :<C-u>Unite -ignorecase buffer bookmark<CR>
 nnoremap <silent><leader>ul :<C-u>Unite -no-quit line<CR>
 nnoremap <silent><leader>ui :<C-u>Unite -no-quit -ignorecase line<CR>
+endif
 
 "in case of you input very slowly
 "ref:https://github.com/Yggdroot/indentLine/issues/48
@@ -702,6 +712,7 @@ let NERDTreeIgnore=['\.pyc']
 let g:NERDTreeChDirMode = 2
 let NERDTreeCustomOpenArgs = {'file': {'reuse': 'currenttab', 'where': 'p', 'keepopen':1}, 'dir': {}}
 
+if 0
 "YCM
 "let g:ycm_path_to_python_interpreter = 'python3'
 let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'
@@ -720,13 +731,16 @@ map <F7> :YcmCompleter FixIt<CR>
 "let g:ycm_filetype_whitelist = {'text':1,'txt':1,'*':1}
 "let g:ycm_filetype_blacklist = {'notes': 1, 'markdown': 1, 'netrw': 1, 'unite': 1, 'tagbar': 1, 'pandoc': 1, 'mail': 1, 'vimwiki': 1, 'infolog': 1, 'qf': 1}
 let g:ycm_filetype_blacklist = {'tex': 1, 'notes': 1, 'markdown': 1, 'netrw': 1, 'unite': 1, 'tagbar': 1, 'pandoc': 1, 'mail': 1, 'vimwiki': 1, 'infolog': 1, 'qf': 1}
+endif
 
+if 0
 "rtags
 noremap <Leader>j :call rtags#JumpTo(g:SAME_WINDOW)<CR>
 noremap <Leader>l :call rtags#JumpTo(g:SAME_WINDOW, { '--declaration-only' : '' })<CR>
 noremap <Leader>b :call rtags#JumpBack()<CR>
 noremap <Leader>i :call rtags#SymbolInfo()<CR>
 noremap <Leader>f :call rtags#FindRefs()<CR>
+endif
 
 "switch between .cpp & .h
 nmap gs :FSHere<CR>
@@ -808,6 +822,7 @@ set shortmess+=c
 " always show signcolumns
 set signcolumn=yes
 
+if 0
 " Use tab for trigger completion with characters ahead and navigate.
 " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
 inoremap <silent><expr> <TAB>
@@ -827,6 +842,30 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
 
 " Use `[d` and `]d` to navigate diagnostics
 nmap <silent> [d <Plug>(coc-diagnostic-prev)
@@ -834,6 +873,7 @@ nmap <silent> ]d <Plug>(coc-diagnostic-next)
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gc <Plug>(coc-declaration)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
