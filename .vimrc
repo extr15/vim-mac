@@ -96,9 +96,9 @@ au FileType html setlocal dict+=~/.vim/dict/css.dict
 let g:pathogen_disabled = []
 
 "syntastic相关
-execute pathogen#infect()
-let g:syntastic_python_checkers=['pylint']
-let g:syntastic_php_checkers=['php', 'phpcs', 'phpmd']
+"execute pathogen#infect()
+"let g:syntastic_python_checkers=['pylint']
+"let g:syntastic_php_checkers=['php', 'phpcs', 'phpmd']
 "golang
 "Processing... % (ctrl+c to stop)
 "let g:fencview_autodetect=0
@@ -111,12 +111,12 @@ syntax on
 "set cuc
 set shortmess=atI   " 启动的时候不显示那个援助乌干达儿童的提示  
 "set go=             " 不要图形按钮  
-"color desert     " 设置背景主题  
+color desert     " 设置背景主题  
 set background=dark
 let g:solarized_italic=0
 "color solarized
 let g:gruvbox_italic=0
-color gruvbox
+"color gruvbox
 "color ron     " 设置背景主题  
 "color torte     " 设置背景主题  
 "set guifont=Courier_New:h10:cANSI   " 设置字体  
@@ -531,7 +531,9 @@ set omnifunc=syntaxcomplete#Complete
 "filetype off                   " required!
 
 set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/my_misc_function/
+call vundle#begin()
+"call vundle#rc()
 
 " let Vundle manage Vundle
 " required! 
@@ -585,10 +587,11 @@ Bundle 'The-NERD-Commenter'
 "Bundle 'fholgado/minibufexpl.vim'
 "Bundle 'rdnetto/YCM-Generator'
 Bundle 'CodeFalling/fcitx-vim-osx'
-Bundle 'lyuts/vim-rtags'
+"Bundle 'lilydjwg/fcitx.vim'
+"Bundle 'lyuts/vim-rtags'
 Bundle 'derekwyatt/vim-fswitch'
-Bundle 'hynek/vim-python-pep8-indent'
-Bundle 'LaTeX-Box-Team/LaTeX-Box'
+"Bundle 'hynek/vim-python-pep8-indent'
+"Bundle 'LaTeX-Box-Team/LaTeX-Box'
 "Bundle 'mhinz/vim-hugefile'
 Bundle 'elzr/vim-json'
 Bundle 'Konfekt/FastFold'
@@ -634,6 +637,11 @@ Bundle 'will133/vim-dirdiff'
 Bundle 'vim-scripts/LargeFile'
 Bundle 'easymotion/vim-easymotion'
 Bundle 'vimwiki/vimwiki'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+
 " ...
 let g:html_indent_inctags = "html,body,head,tbody"
 let g:html_indent_script1 = "inc"
