@@ -500,6 +500,16 @@ if has('gui')
   set guitablabel=%N:\ %t%M
 endif
 
+" using `g<Tab>`
+" Switch to last-active tab
+"if !exists('g:Lasttab')
+"    let g:Lasttab = 1
+"    let g:Lasttab_backup = 1
+"endif
+"autocmd! TabLeave * let g:Lasttab_backup = g:Lasttab | let g:Lasttab = tabpagenr()
+"autocmd! TabClosed * let g:Lasttab = g:Lasttab_backup
+"nmap <silent> tl :exe "tabn " . g:Lasttab<cr>
+
 let g:fencview_autodetect=1
 map <F11> :FencView<CR>
 "set iskeyword+=.
@@ -540,16 +550,16 @@ Bundle 'L9'
 "Bundle 'FuzzyFinder'
 " non github repos
 "Bundle 'https://github.com/wincent/command-t.git'
-Bundle 'Shougo/unite.vim'
-Bundle 'Shougo/vimproc.vim'
+"Bundle 'Shougo/unite.vim'
+"Bundle 'Shougo/vimproc.vim'
 "MRU Most Recently Used
-Bundle 'Shougo/neomru.vim'
+"Bundle 'Shougo/neomru.vim'
 "Saves yank history includes unite.vim history/yank source.
-Bundle 'Shougo/neoyank.vim'
-Bundle 'Shougo/unite-outline'
+"Bundle 'Shougo/neoyank.vim'
+"Bundle 'Shougo/unite-outline'
 "A source of unite.vim for history of command/search.
-Bundle 'thinca/vim-unite-history'
-Bundle 'devjoe/vim-codequery'
+"Bundle 'thinca/vim-unite-history'
+"Bundle 'devjoe/vim-codequery'
 Bundle 'skwp/greplace.vim'
 "Bundle 'Auto-Pairs'
 Bundle 'extr15/Auto-Pairs'
@@ -571,13 +581,13 @@ Bundle 'Vim-Script-Updater'
 "Bundle 'jsbeautify'
 Bundle 'The-NERD-Commenter'
 "Bundle 'fholgado/minibufexpl.vim'
-Bundle 'rdnetto/YCM-Generator'
+"Bundle 'rdnetto/YCM-Generator'
 Bundle 'CodeFalling/fcitx-vim-osx'
-Bundle 'lyuts/vim-rtags'
+"Bundle 'lyuts/vim-rtags'
 Bundle 'derekwyatt/vim-fswitch'
 Bundle 'hynek/vim-python-pep8-indent'
 Bundle 'LaTeX-Box-Team/LaTeX-Box'
-Bundle 'mhinz/vim-hugefile'
+"Bundle 'mhinz/vim-hugefile'
 Bundle 'elzr/vim-json'
 Bundle 'Konfekt/FastFold'
 Bundle 'octol/vim-cpp-enhanced-highlight'
@@ -592,8 +602,9 @@ Bundle 'inkarkat/vim-mark'
 
 "Bundle 'FredKSchott/CoVim'
 "Bundle 'djangojump'
-Bundle 'iamcco/mathjax-support-for-mkdp'
-Bundle 'iamcco/markdown-preview.vim'
+"Bundle 'iamcco/mathjax-support-for-mkdp'
+"Bundle 'iamcco/markdown-preview.vim'
+Bundle 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
 Bundle 'tpope/vim-repeat'
 Bundle 'tpope/vim-surround'
 Bundle 'majutsushi/tagbar'
@@ -610,6 +621,18 @@ Bundle 'junegunn/fzf.vim'
 Bundle 'mkitt/tabline.vim'
 Bundle 'rickhowe/diffchar.vim'
 Bundle 'preservim/nerdtree'
+Bundle 'neoclide/coc.nvim', {'branch': 'release'}
+
+Bundle 'tyru/open-browser.vim'
+Bundle 'aklt/plantuml-syntax'
+Bundle 'weirongxu/plantuml-previewer.vim'
+
+"Bundle 'vimwiki/vimwiki'
+
+let $MYLOCALVIMRC = "/Users/renyong/software/tools/vim/plugin.config.vim"
+if filereadable($MYLOCALVIMRC)
+    source $MYLOCALVIMRC
+endif
 
 " ...
 let g:html_indent_inctags = "html,body,head,tbody"
@@ -626,15 +649,19 @@ let g:tex_no_math = 1
 let g:tagbar_indent = 0
 
 nnoremap tb :TagbarToggle<CR>
-" markdown-preview
-let g:mkdp_refresh_slow = 0
 " vim-surround. `q` means `quote`, this is for markdown file.
 xmap q <Plug>VSurround`
+xmap m <Plug>VSurround"
 :xnoremap S3 <esc>`<O<esc>S```<esc>`>o<esc>S```<esc>k$
 "ack.vim, config to use ag
 "let g:ackprg = 'ag --vimgrep'
 let g:ackprg = 'ag '
 nnoremap <Leader>a :Ack<Enter>
+
+" 剪贴板设置搜索寄存器
+command! -nargs=1 Ss let @/ = <q-args>
+" 搜索任意字符
+command! -nargs=1 SS let @/ = '\V'.escape(<q-args>, '\')
 
 "override vim-gitgutter highlight.vim
 highlight link diffRemoved String
@@ -683,6 +710,7 @@ let g:indentLine_faster = 1
 let NERDTreeIgnore=['\.pyc']
 let g:NERDTreeChDirMode = 2
 
+if 0
 "YCM
 "let g:ycm_path_to_python_interpreter = 'python3'
 let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'
@@ -701,13 +729,16 @@ map <F7> :YcmCompleter FixIt<CR>
 "let g:ycm_filetype_whitelist = {'text':1,'txt':1,'*':1}
 "let g:ycm_filetype_blacklist = {'notes': 1, 'markdown': 1, 'netrw': 1, 'unite': 1, 'tagbar': 1, 'pandoc': 1, 'mail': 1, 'vimwiki': 1, 'infolog': 1, 'qf': 1}
 let g:ycm_filetype_blacklist = {'tex': 1, 'notes': 1, 'markdown': 1, 'netrw': 1, 'unite': 1, 'tagbar': 1, 'pandoc': 1, 'mail': 1, 'vimwiki': 1, 'infolog': 1, 'qf': 1}
+endif
 
+if 0
 "rtags
 noremap <Leader>j :call rtags#JumpTo(g:SAME_WINDOW)<CR>
 noremap <Leader>l :call rtags#JumpTo(g:SAME_WINDOW, { '--declaration-only' : '' })<CR>
 noremap <Leader>b :call rtags#JumpBack()<CR>
 noremap <Leader>i :call rtags#SymbolInfo()<CR>
 noremap <Leader>f :call rtags#FindRefs()<CR>
+endif
 
 "switch between .cpp & .h
 nmap gs :FSHere<CR>
@@ -737,6 +768,10 @@ endfunction
 
 command! -bang -nargs=* AgRaw                              
   \ call fzf#vim#ag_raw(<q-args>,fzf#vim#with_preview(), <bang>0)
+command! -nargs=* AgRawGit
+  \ call fzf#vim#ag_raw(<q-args>, extend(s:with_git_root(), fzf#vim#with_preview()))
+nnoremap <silent> <Leader>rg :AgRawGit -w <C-R><C-W><CR>
+vnoremap <silent> <Leader>rg y:AgRawGit -w <C-r>=fnameescape(@")<CR><CR>
 
 let g:fzf_action = {
   \ 'ctrl-q': function('s:build_quickfix_list'),
