@@ -17,7 +17,6 @@ set sm
 set selection=inclusive
 set wildmenu
 set mousemodel=popup
-" renyong
 set tabpagemax=50
 set fdm=syntax
 au FileType text set fdm=marker fo+=mM
@@ -97,14 +96,7 @@ imap <F3> <C-R>=strftime("%Y.%m.%d")<CR>
 " 让vimrc配置变更在vimrc中立即生效
 " autocmd BufWritePost $MYVIMRC source $MYVIMRC
 
-au FileType php setlocal dict+=~/.vim/dict/php_funclist.dict
-au FileType css setlocal dict+=~/.vim/dict/css.dict
-au FileType c setlocal dict+=~/.vim/dict/c.dict
-au FileType cpp setlocal dict+=~/.vim/dict/cpp.dict
-au FileType scale setlocal dict+=~/.vim/dict/scale.dict
-au FileType javascript setlocal dict+=~/.vim/dict/javascript.dict
-au FileType html setlocal dict+=~/.vim/dict/javascript.dict
-au FileType html setlocal dict+=~/.vim/dict/css.dict
+"au FileType c setlocal dict+=~/.vim/dict/c.dict
 "
 let g:pathogen_disabled = []
 
@@ -268,44 +260,8 @@ map tf :NERDTreeFind<CR>
 "打开树状文件目录  
 map <C-F3> \be  
 :autocmd BufRead,BufNewFile *.dot map <F5> :w<CR>:!dot -Tjpg -o %<.jpg % && eog %<.jpg  <CR><CR> && exec "redr!"
-"C，C++ 按F5编译运行
-map <F5> :call CompileRunGcc()<CR>
-func! CompileRunGcc()
-	exec "w"
-	if &filetype == 'c'
-		exec "!g++ % -o %<"
-		exec "!time ./%<"
-	elseif &filetype == 'cpp'
-		exec "!g++ % -o %<"
-		exec "!time ./%<"
-	elseif &filetype == 'java' 
-		exec "!javac %" 
-		exec "!time java %<"
-	elseif &filetype == 'sh'
-		:!time bash %
-	elseif &filetype == 'python'
-		exec "!time python2.7 %"
-    elseif &filetype == 'html'
-        exec "!firefox % &"
-    elseif &filetype == 'go'
-"        exec "!go build %<"
-        exec "!time go run %"
-    elseif &filetype == 'mkd'
-        exec "!~/.vim/markdown.pl % > %.html &"
-        exec "!firefox %.html &"
-	endif
-endfunc
-"C,C++的调试
-map <F8> :call Rungdb()<CR>
-func! Rungdb()
-	exec "w"
-	exec "!g++ % -g -o %<"
-	exec "!gdb ./%<"
-endfunc
-
 
 "代码格式优化化
-
 map <F6> :call FormartSrc()<CR><CR>
 
 "定义FormartSrc()
@@ -379,9 +335,6 @@ set nobackup
 set noswapfile
 "搜索忽略大小写
 "set ignorecase
-
-
-
 
 set linespace=0
 " 增强模式中的命令行自动完成操作
@@ -708,19 +661,6 @@ filetype plugin indent on     " required!
 "set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.png,*.jpg,*.gif     " MacOSX/Linux
 "set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.pyc,*.png,*.jpg,*.gif  " Windows
 
-if 0
-"unite
-"let g:unite_source_rec_async_command='ag --path-to-ignore /Users/renyong/software/software_git/config/.agignore --nocolor --nogroup --ignore ".hg" --ignore ".svn" --ignore ".git" --ignore ".bzr" --hidden -g ""'
-let g:unite_source_rec_async_command =
-    \ ['ag', '-p ~/.agignore', '--follow', '--nogroup', '--nocolor', '--hidden', '-g', '']
-nnoremap <silent> <leader>ug  :<C-u>Unite file_rec/git:--cached:--others:--exclude-standard<CR>
-nnoremap <leader>ur :<C-u>Unite -start-insert -ignorecase file_rec/async<CR>
-nnoremap <leader>uf :<C-u>Unite -ignorecase file<CR>
-nnoremap <silent> <leader>ub :<C-u>Unite -ignorecase buffer bookmark<CR>
-nnoremap <silent><leader>ul :<C-u>Unite -no-quit line<CR>
-nnoremap <silent><leader>ui :<C-u>Unite -no-quit -ignorecase line<CR>
-endif
-
 "in case of you input very slowly
 "ref:https://github.com/Yggdroot/indentLine/issues/48
 "'let g:indentLine_faster = 1' can make the performance better, but indentLine will display on the non leading spaces. In my frequent use, I don't have the performance issue, so I don't let it to be default
@@ -739,36 +679,6 @@ let NERDTreeCustomOpenArgs = {'file': {'reuse': 'currenttab', 'where': 'p', 'kee
 let g:NERDSpaceDelims = 1
 let g:NERDDefaultAlign = 'left'
 let g:NERDAltDelims_cpp = 1
-
-if 0
-"YCM
-"let g:ycm_path_to_python_interpreter = 'python3'
-let g:ycm_path_to_python_interpreter = '/usr/local/bin/python3'
-let g:ycm_confirm_extra_conf = 0
-let g:syntastic_always_populate_loc_list = 1
-let g:ycm_error_symbol = '>>'
-let g:ycm_warning_symbol = '>*'
-let g:ycm_disable_for_files_larger_than_kb=500
-let g:ycm_auto_hover=''
-nnoremap gd :YcmCompleter GoTo<CR>
-nnoremap gc :YcmCompleter GoToDeclaration<CR>
-nmap <F4> :YcmDiags<CR>
-map <F7> :YcmCompleter FixIt<CR>
-" let g:ycm_filetype_whitelist = {'text':1}; this cmd will overwrite default
-" set:  {'*':1}
-"let g:ycm_filetype_whitelist = {'text':1,'txt':1,'*':1}
-"let g:ycm_filetype_blacklist = {'notes': 1, 'markdown': 1, 'netrw': 1, 'unite': 1, 'tagbar': 1, 'pandoc': 1, 'mail': 1, 'vimwiki': 1, 'infolog': 1, 'qf': 1}
-let g:ycm_filetype_blacklist = {'tex': 1, 'notes': 1, 'markdown': 1, 'netrw': 1, 'unite': 1, 'tagbar': 1, 'pandoc': 1, 'mail': 1, 'vimwiki': 1, 'infolog': 1, 'qf': 1}
-endif
-
-if 0
-"rtags
-noremap <Leader>j :call rtags#JumpTo(g:SAME_WINDOW)<CR>
-noremap <Leader>l :call rtags#JumpTo(g:SAME_WINDOW, { '--declaration-only' : '' })<CR>
-noremap <Leader>b :call rtags#JumpBack()<CR>
-noremap <Leader>i :call rtags#SymbolInfo()<CR>
-noremap <Leader>f :call rtags#FindRefs()<CR>
-endif
 
 "switch between .cpp & .h
 nmap gs :FSHere<CR>
@@ -867,25 +777,6 @@ set shortmess+=c
 set signcolumn=yes
 
 if 0
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 endif
 
 inoremap <silent><expr> <TAB>
