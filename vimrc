@@ -393,7 +393,9 @@ set tags=./tags,tags;$HOME
 set autochdir 
 "autocmd BufEnter * silent! lcd %:p:h
 "skip fugitive git object
-autocmd BufEnter * silent! if &buftype!="terminal" && expand('%:p') !~ '://' | :lchdir %:p:h | endif
+"autocmd BufEnter * silent! if &buftype!="terminal" && expand('%:p') !~ '://' | :lchdir %:p:h | endif
+"autocmd BufEnter * silent! if &buftype!="terminal" && expand('%:p') !~ '://' && expand('%') !~ '__Tagbar__' | :lchdir %:p:h | endif
+autocmd BufEnter * silent! if &buftype!="terminal" && expand('%:p') !~ '://' && expand('%') !~ '__Tagbar__\|NERD_tree_tab' | :lchdir %:p:h | endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "默认打开Taglist 
 let Tlist_Auto_Open=0 
@@ -412,7 +414,6 @@ let g:miniBufExplMapWindowNavArrows = 1
 let g:miniBufExplMapCTabSwitchBufs = 1
 let g:miniBufExplModSelTarget = 1  
 "nmap tl :Tlist<cr>
-nmap tg :Tlist<cr>
 
 "python补全
 let g:pydiction_location = '~/.vim/after/complete-dict'
@@ -543,6 +544,7 @@ Plug 'nelstrom/vim-visual-star-search'
 
 Plug 'junegunn/fzf', {'do' : {-> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+"Plug 'pbogut/fzf-mru.vim'
 "Plug 'mkitt/tabline.vim'
 Plug 'sangdol/mintabline.vim'
 Plug 'rickhowe/diffchar.vim'
@@ -604,6 +606,9 @@ let g:im_select_enable_cmd_line=0
 "mintabline
 let g:mintabline_tab_max_chars = 20
 
+let g:DirDiffExcludes = "__pycache__,*.git"
+"let g:DirDiffForceLang = "C"
+
 " tagbar
 "let g:tagbar_left = 1
 " display more compact or more spacious.
@@ -611,6 +616,11 @@ let g:tagbar_indent = 0
 let g:tagbar_sort = 0
 
 nnoremap tb :TagbarToggle<CR>
+
+"`t` is to
+nnoremap tt :TagbarOpen fj<CR>
+nnoremap tn :NERDTreeFocus<CR>
+
 " markdown-preview
 let g:mkdp_refresh_slow = 0
 " vim-surround. `q` means `quote`, this is for markdown file.
@@ -693,7 +703,9 @@ nnoremap <silent> <S-f> :GFiles<CR>
 nnoremap <silent> <S-b> :Buffers<CR>
 nnoremap <silent> <S-w> :Windows<CR>
 nnoremap <silent> <S-e> :History<CR>
-nnoremap <S-t> :Tags 
+"nnoremap <S-t> :Tags 
+nnoremap <S-t> :BTags<CR> 
+"nnoremap ts :BTags<CR> 
 nnoremap <silent> <Leader>ah :Ag <C-R><C-W><CR>
 vnoremap <silent> <Leader>ah y:Ag <C-r>=fnameescape(@")<CR><CR>
 
@@ -735,6 +747,33 @@ let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 let g:fzf_vim = {}
 let g:fzf_vim.buffers_jump = 1
 
+let g:fzf_colors = {
+ \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+ \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn']
+ \ } 
+
+"let g:fzf_vim.preview_window = ['--wrap']
+
+if 0
+"fzf-mru.vim
+command! -bang -nargs=? FZFMru call fzf_mru#actions#mru(<q-args>,
+    \{
+        \'window': {'width': 0.9, 'height': 0.8},
+        \'options': [
+            \'--preview', 'cat {}',
+            \'--preview-window', 'up:60%',
+            \'--bind', 'ctrl-_:toggle-preview'
+        \]
+    \}
+\)
+
+nnoremap <Leader>fm :FZFMru<CR>
+nnoremap <silent> <S-u> :FZFMru<CR>
+endif
+
+"https://vi.stackexchange.com/questions/9231/focus-previous-tab-window-when-closing-current
+autocmd TabClosed * tabprevious
+
 "重定向命令输出到新窗口
 " http://vim.wikia.com/wiki/Capture_ex_command_output
 function! TabMessage(cmd)
@@ -773,9 +812,6 @@ set shortmess+=c
 
 " always show signcolumns
 set signcolumn=yes
-
-if 0
-endif
 
 inoremap <silent><expr> <TAB>
       \ coc#pum#visible() ? coc#pum#next(1) :
@@ -888,8 +924,14 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
+"call coc#config('list', { 'height': 20 })
+call coc#config('list', { 'maxPreviewHeight': 20 })
+
 fixdel
 let g:coc_start_at_startup = 1
+
+"sol, nosol
+set nostartofline
 
 set backspace=indent,eol,start
 set showcmd "上一句showcmd好像被覆盖了

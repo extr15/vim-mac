@@ -1,1 +1,3 @@
 *.pyc
+plugged/
+autoload/plug.vim
